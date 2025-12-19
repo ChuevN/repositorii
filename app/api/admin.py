@@ -76,44 +76,6 @@ async def delete_user_admin(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ошибка при удалении пользователя: {str(e)}")
 
-
-@router.get("/farms", summary="Получение списка всех ферм (только для админов)")
-async def get_all_farms_admin(
-    db: DBDep,
-    is_admin: IsAdminDep,
-    page: int = 1,
-    per_page: int = 10,
-) -> dict:
-    """Получить список всех ферм"""
-    try:
-        farms, total = await AdminService(db).get_all_farms(page=page, per_page=per_page)
-        return {
-            "farms": farms,
-            "total": total,
-            "page": page,
-            "per_page": per_page,
-            "total_pages": (total + per_page - 1) // per_page
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Ошибка при получении ферм: {str(e)}")
-
-
-@router.delete("/farms/{farm_id}", summary="Удаление фермы (только для админов)")
-async def delete_farm_admin(
-    farm_id: int,
-    db: DBDep,
-    is_admin: IsAdminDep,
-) -> dict[str, str]:
-    """Удалить ферму из системы"""
-    try:
-        await AdminService(db).delete_farm(farm_id=farm_id)
-        return {"status": "OK", "message": f"Ферма с ID {farm_id} удалена"}
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Ошибка при удалении фермы: {str(e)}")
-
-
 @router.get("/products", summary="Получение списка всех продуктов (только для админов)")
 async def get_all_products_admin(
     db: DBDep,

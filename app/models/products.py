@@ -5,7 +5,6 @@ from app.database.database import Base
 
 if TYPE_CHECKING:
     from .categories import Category
-    from .farms import Farm
     from .cart import Cart
     from .order_items import OrderItem
     from .reviews import Review
@@ -14,7 +13,6 @@ class Product(Base):
     __tablename__ = "products"
     
     id: Mapped[int] = mapped_column(primary_key=True)
-    farm_id: Mapped[int] = mapped_column(ForeignKey("farms.id"), nullable=False)
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     unit: Mapped[str] = mapped_column(String(50), nullable=False, default='шт')
@@ -25,7 +23,6 @@ class Product(Base):
     image: Mapped[Optional[bytes]] = mapped_column(LargeBinary)
     
     category: Mapped["Category"] = relationship(back_populates="products")
-    farm: Mapped["Farm"] = relationship(back_populates="products")
     cart_items: Mapped[list["Cart"]] = relationship(back_populates="product")
     order_items: Mapped[list["OrderItem"]] = relationship(back_populates="product")
     reviews: Mapped[list["Review"]] = relationship(back_populates="product")

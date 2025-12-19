@@ -2,7 +2,6 @@ from sqlalchemy import select, func
 from app.database.db_manager import DBManager
 from app.models.users import User
 from app.models.roles import Role
-from app.models.farms import Farm
 from app.models.products import Product
 from app.models.orders import Order
 from app.models.reviews import Review
@@ -21,12 +20,6 @@ class AdminService:
                 select(func.count(User.id))
             )
             total_users = total_users.scalar()
-
-            # Количество ферм
-            total_farms = await self.db.execute(
-                select(func.count(Farm.id))
-            )
-            total_farms = total_farms.scalar()
 
             # Количество продуктов
             total_products = await self.db.execute(
@@ -48,7 +41,6 @@ class AdminService:
 
             return {
                 "total_users": total_users or 0,
-                "total_farms": total_farms or 0,
                 "total_products": total_products or 0,
                 "total_orders": total_orders or 0,
                 "total_reviews": total_reviews or 0,
@@ -88,26 +80,7 @@ class AdminService:
         
         await self.db.delete(user)
         await self.db.commit()
-
-    async def get_all_farms(self, page: int = 1, per_page: int = 10) -> tuple[list, int]:
-        """Получить все фермы с пагинацией"""
-        offset = (page - 1) * per_page
-        farms = await self.db.farms.get_all(offset=offset, limit=per_page)
         
-        total = await self.db.execute(select(func.count(Farm.id)))
-        total = total.scalar() or 0
-        
-        return farms, total
-
-    async def delete_farm(self, farm_id: int) -> None:
-        """Удалить ферму"""
-        farm = await self.db.farms.get_one(id=farm_id)
-        if not farm:
-            raise ValueError(f"Ферма с ID {farm_id} не найдена")
-        
-        await self.db.delete(farm)
-        await self.db.commit()
-
     async def get_all_products(self, page: int = 1, per_page: int = 10) -> tuple[list, int]:
         """Получить все продукты с пагинацией"""
         offset = (page - 1) * per_page

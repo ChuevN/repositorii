@@ -6,7 +6,6 @@ from app.database.database import Base
 
 if TYPE_CHECKING:
     from .users import User
-    from .farms import Farm
     from .order_items import OrderItem
 
 class Order(Base):
@@ -22,5 +21,4 @@ class Order(Base):
     payment_status: Mapped[str] = mapped_column(String(50), nullable=False, default="pending")
     
     user: Mapped["User"] = relationship(back_populates="orders")
-    farm: Mapped["Farm"] = relationship(back_populates="orders")
     items: Mapped[list["OrderItem"]] = relationship(back_populates="order")

@@ -5,11 +5,9 @@ from app.database.database import Base
 
 if TYPE_CHECKING:
     from .roles import Role
-    from .farms import Farm
     from .cart import Cart
     from .orders import Order
     from .reviews import Review
-    from .user_subscriptions import UserSubscription
 
 class User(Base):
     __tablename__ = "users"
@@ -24,8 +22,6 @@ class User(Base):
     card: Mapped[Optional[int]] = mapped_column(Integer)
     
     role: Mapped["Role"] = relationship(back_populates="users")
-    farm: Mapped[Optional["Farm"]] = relationship(back_populates="user")
     cart_items: Mapped[list["Cart"]] = relationship(back_populates="user")
     orders: Mapped[list["Order"]] = relationship(back_populates="user")
     reviews: Mapped[list["Review"]] = relationship(back_populates="user")
-    subscriptions: Mapped[list["UserSubscription"]] = relationship(back_populates="user")
